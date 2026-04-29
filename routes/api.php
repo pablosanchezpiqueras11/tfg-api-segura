@@ -12,3 +12,7 @@ Route::get('/saludo', function () {
         'fecha' => date('Y-m-d H:i:s')
     ]);
 });
+
+use App\Http\Controllers\InformeMedicoController;
+Route::get('/informes', [InformeMedicoController::class, 'index']);
+Route::post('/informes', [InformeMedicoController::class, 'store']);
