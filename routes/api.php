@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InformeMedicoController;
 
 // Primer punto de entrada (Endpoint)
 Route::get('/saludo', function () {
@@ -13,6 +14,8 @@ Route::get('/saludo', function () {
     ]);
 });
 
-use App\Http\Controllers\InformeMedicoController;
+// Módulo de Informes Médicos (Vulnerable)
 Route::get('/informes', [InformeMedicoController::class, 'index']);
 Route::post('/informes', [InformeMedicoController::class, 'store']);
+Route::get('/informes/{id}', [InformeMedicoController::class, 'show']);
+Route::delete('/informes/{id}', [InformeMedicoController::class, 'destroy']);

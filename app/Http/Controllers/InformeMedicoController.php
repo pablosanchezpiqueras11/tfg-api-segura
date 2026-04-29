@@ -28,4 +28,30 @@ class InformeMedicoController extends Controller
         'data' => $informe
     ], 201);
     }
+
+    // Obtener un informe específico
+    public function show($id)
+    {
+        $informe = InformeMedico::find($id);
+
+        if (!$informe) {
+            return response()->json(['mensaje' => 'Informe no encontrado'], 404);
+        }
+
+        return response()->json($informe);
+    }
+
+    // Borrar un informe
+    public function destroy($id)
+    {
+        $informe = InformeMedico::find($id);
+
+        if (!$informe) {
+            return response()->json(['mensaje' => 'Informe no encontrado'], 404);
+        }
+
+        $informe->delete();
+
+        return response()->json(['mensaje' => 'Informe eliminado correctamente (Versión Vulnerable)']);
+    }
 }
