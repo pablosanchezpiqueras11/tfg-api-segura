@@ -17,7 +17,7 @@ return new class extends Migration
         $table->text('diagnostico'); // Diagnóstico detallado
         $table->string('ruta_archivo')->nullable(); // Para el PDF
         
-        // Relación con el paciente (owner_id en el prompt)
+        // Relación con el paciente 
         $table->foreignId('paciente_id')->constrained('users')->onDelete('cascade');
         
         // Relación con el médico (quien lo crea)
