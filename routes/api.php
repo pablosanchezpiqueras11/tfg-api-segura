@@ -4,9 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InformeMedicoController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
-
-// Primer punto de entrada (Endpoint)
+// Ruta de prueba
 Route::get('/saludo', function () {
     return response()->json([
         'mensaje' => 'Hola Mundo, mi API del TFG está viva',
@@ -16,20 +16,32 @@ Route::get('/saludo', function () {
     ]);
 });
 
-// Rutas que requieren estar logueado (Protegidas)
+// Rutas públicas de autenticación
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+// Rutas protegidas (requieren estar logueado)
 Route::middleware('auth:sanctum')->group(function () {
-    // Módulo de Informes Médicos (Vulnerable)
-    Route::get('/informes', [InformeMedicoController::class, 'index']);
-    Route::post('/informes', [InformeMedicoController::class, 'store']);
-    Route::get('/informes/{id}', [InformeMedicoController::class, 'show']);
-    Route::delete('/informes/{id}', [InformeMedicoController::class, 'destroy']);
+
     Route::post('/logout', [AuthController::class, 'logout']);
-    // También se puede añadir una ruta para ver el perfil del usuario actual
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-});
-// Rutas públicas de autenticación(de momento, sin protección)
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+    // Rutas de informes médicos
+    Route::get('/informes', [InformeMedicoController::class, 'index']);
+    Route::post('/informes', [InformeMedicoController::class, 'store']);
+    Route::get('/informes/{id}', [InformeMedicoController::class, 'show']);
+    Route::put('/informes/{id}', [InformeMedicoController::class, 'update']);
+    Route::delete('/informes/{id}', [InformeMedicoController::class, 'destroy']);
+
+    // Rutas solo para administradores
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/users', [UserController::class, 'index']);
+        Route::get('/users/{id}', [UserController::class, 'show']);
+        Route::put('/users/{id}', [UserController::class, 'update']);
+        Route::delete('/users/{id}', [UserController::class, 'destroy']);
+        Route::patch('/users/{id}/lock', [UserController::class, 'lock']);
+        Route::patch('/users/{id}/unlock', [UserController::class, 'unlock']);
+    });
+});
