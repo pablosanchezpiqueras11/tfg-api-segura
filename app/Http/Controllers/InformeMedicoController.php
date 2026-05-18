@@ -4,81 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Models\InformeMedico;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InformeMedicoController extends Controller
 {
+    // Listar informes según el rol
     public function index()
     {
-        // De momento, devolvemos TODOS los informes (Versión Vulnerable)
-        return response()->json(InformeMedico::all());
+        $user = Auth::user();
+
+        if ($user->hasRole('admin')) {
+            // Admin ve todos los informes
+            $informes = InformeMedico::all();
+        } elseif ($user->hasRole('manager')) {
+            // Manager ve los informes donde es el médico
+            $informes = InformeMedico::where('medico_id', $user->id)->get();
+        } else {
+            // Usuario normal solo ve sus propios informes como paciente
+            $informes = InformeMedico::where('paciente_id', $user->id)->get();
+        }
+
+        return response()->json($informes);
     }
 
+    // Crear un informe
     public function store(Request $request)
     {
-    // 1. VALIDACIÓN: Evitamos que entren datos vacíos o formatos incorrectos
-    $request->validate([
-        'titulo'      => 'required|string|max:255',
-        'diagnostico' => 'required|string',
-        'paciente_id' => 'required|integer',
-        'medico_id'   => 'required|integer',
-    ]);
-
-    // 2. SANEAMIENTO: Desinfectamos los campos de texto antes de que toquen la BD
-    // Esto elimina cualquier etiqueta <script>, <html> o similar
-    $tituloSeguro      = strip_tags($request->titulo);
-    $diagnosticoSeguro = strip_tags($request->diagnostico);
-
-    // 3. CREACIÓN: Usamos las variables seguras para persistir el informe
-    $informe = InformeMedico::create([
-        'titulo'      => $tituloSeguro,
-        'diagnostico' => $diagnosticoSeguro,
-        'paciente_id' => $request->paciente_id,
-        'medico_id'   => $request->medico_id,
-    ]);
-
-    // 4. RESPUESTA: Confirmamos que se ha creado con éxito
-    return response()->json([
-        'mensaje' => 'Informe creado con éxito (Protección XSS activada)',
-        'data'    => $informe
-    ], 201);
-    }
-
-    // Obtener un informe específico
-    public function show($id)
-    {
-        $informe = InformeMedico::find($id);
-
-        if (!$informe) {
-            return response()->json(['mensaje' => 'Informe no encontrado'], 404);
-        }
-
-        return response()->json($informe);
-    }
-
-    // Actualizar un informe existente
-    public function update(Request $request, $id)
-    {
-        // 1. Buscamos el informe (si no existe, lanza un 404)
-        $informe = InformeMedico::find($id);
-
-        if (!$informe) {
-            return response()->json(['mensaje' => 'Informe no encontrado'], 404);
-        }
-
-        // 2. VALIDACIÓN: Aseguramos que los datos nuevos sean correctos
         $request->validate([
             'titulo'      => 'required|string|max:255',
             'diagnostico' => 'required|string',
-            'paciente_id' => 'required|integer',
-            'medico_id'   => 'required|integer',
+            'paciente_id' => 'required|integer|exists:users,id',
+            'medico_id'   => 'required|integer|exists:users,id',
         ]);
 
-        // 3. SANEAMIENTO: Limpiamos los datos antes de actualizar (Protección XSS)
         $tituloSeguro      = strip_tags($request->titulo);
         $diagnosticoSeguro = strip_tags($request->diagnostico);
 
-        // 4. ACTUALIZACIÓN: Guardamos los cambios desinfectados
-        $informe->update([
+        $informe = InformeMedico::create([
             'titulo'      => $tituloSeguro,
             'diagnostico' => $diagnosticoSeguro,
             'paciente_id' => $request->paciente_id,
@@ -86,22 +48,83 @@ class InformeMedicoController extends Controller
         ]);
 
         return response()->json([
-            'mensaje' => 'Informe actualizado con éxito (Protección XSS activada)',
+            'message' => 'Informe creado con éxito',
             'data'    => $informe
-        ], 200);
+        ], 201);
     }
 
-    // Borrar un informe
-    public function destroy($id)
+    // Ver un informe específico
+    public function show($id)
     {
+        $user = Auth::user();
         $informe = InformeMedico::find($id);
 
         if (!$informe) {
-            return response()->json(['mensaje' => 'Informe no encontrado'], 404);
+            return response()->json(['message' => 'Informe no encontrado'], 404);
+        }
+
+        // Control de acceso: evita IDOR
+        if (!$user->hasRole('admin') &&
+            $informe->paciente_id !== $user->id &&
+            $informe->medico_id !== $user->id) {
+            return response()->json(['message' => 'Acceso no autorizado'], 403);
+        }
+
+        return response()->json($informe);
+    }
+
+    // Actualizar un informe
+    public function update(Request $request, $id)
+    {
+        $user = Auth::user();
+        $informe = InformeMedico::find($id);
+
+        if (!$informe) {
+            return response()->json(['message' => 'Informe no encontrado'], 404);
+        }
+
+        // Solo admin o el médico que lo creó pueden editar
+        if (!$user->hasRole('admin') && $informe->medico_id !== $user->id) {
+            return response()->json(['message' => 'Acceso no autorizado'], 403);
+        }
+
+        $request->validate([
+            'titulo'      => 'required|string|max:255',
+            'diagnostico' => 'required|string',
+            'paciente_id' => 'required|integer|exists:users,id',
+            'medico_id'   => 'required|integer|exists:users,id',
+        ]);
+
+        $informe->update([
+            'titulo'      => strip_tags($request->titulo),
+            'diagnostico' => strip_tags($request->diagnostico),
+            'paciente_id' => $request->paciente_id,
+            'medico_id'   => $request->medico_id,
+        ]);
+
+        return response()->json([
+            'message' => 'Informe actualizado con éxito',
+            'data'    => $informe
+        ]);
+    }
+
+    // Eliminar un informe
+    public function destroy($id)
+    {
+        $user = Auth::user();
+        $informe = InformeMedico::find($id);
+
+        if (!$informe) {
+            return response()->json(['message' => 'Informe no encontrado'], 404);
+        }
+
+        // Solo admin puede eliminar
+        if (!$user->hasRole('admin')) {
+            return response()->json(['message' => 'Acceso no autorizado'], 403);
         }
 
         $informe->delete();
 
-        return response()->json(['mensaje' => 'Informe eliminado correctamente (Versión Vulnerable)']);
+        return response()->json(['message' => 'Informe eliminado correctamente']);
     }
 }

@@ -26,7 +26,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password), // ¡Importante! Siempre encriptada
         ]);
-
+        $user->assignRole('user'); // Asignamos rol por defecto
         // Emitimos el token de Sanctum
         $token = $user->createToken('auth_token')->plainTextToken;
 
