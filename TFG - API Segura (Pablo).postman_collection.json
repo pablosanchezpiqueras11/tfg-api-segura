@@ -35,11 +35,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/saludo",
+              "raw": "http://localhost/api/saludo",
+              "protocol": "http",
               "host": [
-                "{{base_url}}"
+                "localhost"
               ],
               "path": [
+                "api",
                 "saludo"
               ]
             },
@@ -75,7 +77,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "16|xIKX2N34CqqrQ7BiO68M1cB9ixUZwG6hGJ8ae72m2155a5fe",
+                  "value": "25|XauhmbNb5d7jRiEy2ZttvdBLOVatxgbzlMGb1uNY3faa4bce",
                   "type": "string"
                 }
               ]
@@ -98,11 +100,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/informes",
+              "raw": "http://localhost/api/informes",
+              "protocol": "http",
               "host": [
-                "{{base_url}}"
+                "localhost"
               ],
               "path": [
+                "api",
                 "informes"
               ]
             },
@@ -133,7 +137,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "",
+                  "value": "25|XauhmbNb5d7jRiEy2ZttvdBLOVatxgbzlMGb1uNY3faa4bce",
                   "type": "string"
                 }
               ]
@@ -184,7 +188,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "22|90QHiKqX16S84731tNkdq56UvEGwb0FrJ1OcKNypf4dbb19b",
+                  "value": "25|XauhmbNb5d7jRiEy2ZttvdBLOVatxgbzlMGb1uNY3faa4bce",
                   "type": "string"
                 }
               ]
@@ -192,7 +196,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost/api/informes/1",
+              "raw": "http://localhost/api/informes/2",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -200,7 +204,7 @@
               "path": [
                 "api",
                 "informes",
-                "1"
+                "2"
               ]
             },
             "description": "StartFragmentSe han implementado tests unitarios en Postman para asegurar la integridad de las respuestas en cada fase del desarrolloEndFragment  \nStartFragmentSe ha verificado la persistencia de datos mediante un ciclo completo de creación, consulta y eliminación, confirmando que la API responde correctamente a las operaciones básicas incluso en su estado vulnerableEndFragment"
@@ -225,16 +229,28 @@
             }
           ],
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "25|XauhmbNb5d7jRiEy2ZttvdBLOVatxgbzlMGb1uNY3faa4bce",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/informes/1",
+              "raw": "http://localhost/api/informes/2",
+              "protocol": "http",
               "host": [
-                "{{base_url}}"
+                "localhost"
               ],
               "path": [
+                "api",
                 "informes",
-                "1"
+                "2"
               ]
             },
             "description": "DELETE también es vulnerable porque cualquier persona que sepa la URL puede borrar un informe médico real sin ser administrador.EndFragment  \nStartFragmentSe han implementado tests unitarios en Postman para asegurar la integridad de las respuestas en cada fase del desarrolloEndFragment"
@@ -263,7 +279,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Pablo Sanchez\",\r\n    \"email\": \"pablo2@ejemplo.com\",\r\n    \"password\": \"contrasenya123\"\r\n}",
+              "raw": "{\r\n    \"name\": \"Pablo Sanchez12\",\r\n    \"email\": \"pablo12@ejemplo.com\",\r\n    \"password\": \"contrasenya123\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -271,11 +287,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/register",
+              "raw": "http://localhost/api/register",
+              "protocol": "http",
               "host": [
-                "{{base_url}}"
+                "localhost"
               ],
               "path": [
+                "api",
                 "register"
               ]
             }
@@ -324,7 +342,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "",
+                  "value": "27|2ZwfU4SK27iF43chWrBDW9LKXMXPQW8dQZq2hiowfbfd7425",
                   "type": "string"
                 }
               ]
@@ -343,11 +361,13 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/logout",
+              "raw": "http://localhost/api/logout",
+              "protocol": "http",
               "host": [
-                "{{base_url}}"
+                "localhost"
               ],
               "path": [
+                "api",
                 "logout"
               ]
             }
@@ -367,7 +387,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "19|OD2cmSHtzT8hJZ6qpfvH03oTymGAbQdeHulZpeeTa453ee07",
+                  "value": "27|2ZwfU4SK27iF43chWrBDW9LKXMXPQW8dQZq2hiowfbfd7425",
                   "type": "string"
                 }
               ]
