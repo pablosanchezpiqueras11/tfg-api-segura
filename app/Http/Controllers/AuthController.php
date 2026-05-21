@@ -39,58 +39,65 @@ class AuthController extends Controller
     
     public function login(Request $request)
     {
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-    // Si el usuario no existe, devolvemos error genérico (Seguridad de no enumeración)
-    if (!$user) {
-        return response()->json(['message' => 'Credenciales incorrectas'], 401);
-    }
-
-    // 1. VERIFICAR BLOQUEO
-    // Usamos parse() para asegurar que comparamos objetos Carbon correctamente
-    if ($user->bloqueado_hasta && Carbon::parse($user->bloqueado_hasta)->isFuture()) {
-        $minutosRestantes = Carbon::now()->diffInMinutes($user->bloqueado_hasta);
-        return response()->json([
-            'message' => "Cuenta bloqueada. Inténtalo en $minutosRestantes minutos."
-        ], 403);
-    }
-
-    // 2. VERIFICAR CONTRASEÑA
-    if (!Hash::check($request->password, $user->password)) {
-        // Incrementamos el contador de fallos
-        $user->increment('intentos_fallidos');
-
-        // Si llega a 3 fallos, bloqueamos por 5 minutos
-        if ($user->intentos_fallidos >= 3) {
-            $user->update([
-                'bloqueado_hasta' => Carbon::now()->addMinutes(5)
-            ]);
-            return response()->json(['message' => 'Cuenta bloqueada por 5 minutos debido a múltiples fallos.'], 403);
+        if (!$user) {
+            return response()->json(['message' => 'Credenciales incorrectas'], 401);
         }
 
-        return response()->json(['message' => 'Credenciales incorrectas'], 401);
-    }
+        // 1. VERIFICAR BLOQUEO
+        if ($user->bloqueado_hasta && Carbon::parse($user->bloqueado_hasta)->isFuture()) {
+            $minutosRestantes = Carbon::now()->diffInMinutes($user->bloqueado_hasta);
+            return response()->json([
+                'message' => "Cuenta bloqueada. Inténtalo en $minutosRestantes minutos."
+            ], 403);
+        }
 
-    // 3. LOGIN EXITOSO
-    // Limpiamos rastro de bloqueos previos y aplicamos "Sesión Única"
-    $user->tokens()->delete(); // Revoca tokens anteriores
-    $user->update([
-        'intentos_fallidos' => 0,
-        'bloqueado_hasta' => null
-    ]);
+        // 2. VERIFICAR CONTRASEÑA
+        if (!Hash::check($request->password, $user->password)) {
+            $user->increment('intentos_fallidos');
 
-    $token = $user->createToken('auth_token')->plainTextToken;
+            if ($user->intentos_fallidos >= 3) {
+                $user->update([
+                    'bloqueado_hasta' => Carbon::now()->addMinutes(5)
+                ]);
+                return response()->json(['message' => 'Cuenta bloqueada por 5 minutos debido a múltiples fallos.'], 403);
+            }
 
-    return response()->json([
-        'message' => 'Login correcto',
-        'access_token' => $token,
-        'token_type' => 'Bearer',
-    ]);
+            return response()->json(['message' => 'Credenciales incorrectas'], 401);
+        }
+
+        // 3. LOGIN EXITOSO
+        $user->tokens()->delete();
+        $user->update([
+            'intentos_fallidos' => 0,
+            'bloqueado_hasta' => null,
+        ]);
+
+        // 4. VERIFICAR MFA
+        if ($user->mfa_enabled) {
+            $tempToken = \Illuminate\Support\Str::random(64);
+            $user->update(['mfa_temp_token' => $tempToken]);
+
+            return response()->json([
+                'message' => 'MFA requerido',
+                'mfa_required' => true,
+                'temporary_token' => $tempToken,
+            ]);
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login correcto',
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ]);
     }
 
     public function logout(Request $request)

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InformeMedicoController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\MfaController;
 
 // Ruta de prueba
 Route::get('/saludo', function () {
@@ -16,9 +17,12 @@ Route::get('/saludo', function () {
     ]);
 });
 
+
+
 // Rutas públicas de autenticación
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/mfa/verify-login', [MfaController::class, 'verifyLogin']);
 
 // Rutas protegidas (requieren estar logueado)
 Route::middleware('auth:sanctum')->group(function () {
@@ -34,6 +38,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/informes/{id}', [InformeMedicoController::class, 'show']);
     Route::put('/informes/{id}', [InformeMedicoController::class, 'update']);
     Route::delete('/informes/{id}', [InformeMedicoController::class, 'destroy']);
+
+    // Rutas de MFA
+    Route::post('/mfa/setup', [MfaController::class, 'setup']);
+    Route::post('/mfa/confirm', [MfaController::class, 'confirm']);
+    Route::post('/mfa/disable', [MfaController::class, 'disable']);
+    Route::post('/mfa/recovery-codes/regenerate', [MfaController::class, 'regenerateRecoveryCodes']);
 
     // Rutas solo para administradores
     Route::middleware('role:admin')->group(function () {

@@ -409,6 +409,109 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "MFA",
+      "item": [
+        {
+          "name": "Activar MFA - Paso 1 (Setup)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "28|VlW5qlO5oifk0v6VTo4pRe1eRBJH4MzM0P8qEpv267769c1c",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/mfa/setup",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "mfa",
+                "setup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Activar MFA - Paso 2 (Confirmar)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "28|VlW5qlO5oifk0v6VTo4pRe1eRBJH4MzM0P8qEpv267769c1c",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"code\": \"392159\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost/api/mfa/confirm",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "mfa",
+                "confirm"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MFA - Verificar Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"temporary_token\": \"4Ouw8Q1LxrquYRlvpMfuNutgk9qEv9xpItSQuBqGEErobBS1b4CGd8AOts0xT5QR\",\r\n    \"code\": \"100458\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost/api/mfa/verify-login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "mfa",
+                "verify-login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "event": [

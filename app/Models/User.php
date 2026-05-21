@@ -22,6 +22,7 @@ class User extends Authenticatable
         'password',
         'intentos_fallidos',
         'bloqueado_hasta',
+        'mfa_temp_token',
     ];
 
     /**
