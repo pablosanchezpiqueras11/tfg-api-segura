@@ -512,6 +512,111 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Informes",
+      "item": [
+        {
+          "name": "Crear Informe con Archivo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "30|sCQc7HkWz2OV9I911LVGn0zaDkEkEbYBM5uhlOf8530b2852",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "titulo",
+                  "value": "Informe con archivo",
+                  "type": "text",
+                  "uuid": "d0326036-ae6a-49bb-a681-9f876f9348aa"
+                },
+                {
+                  "key": "diagnostico",
+                  "value": "Diagnóstico de prueba",
+                  "type": "text",
+                  "uuid": "f2cdb433-463f-4251-af2c-697930d43784"
+                },
+                {
+                  "key": "paciente_id",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "766f59e2-b0e3-4bf5-bbdf-cc5a3eb15f9d"
+                },
+                {
+                  "key": "medico_id",
+                  "value": "6",
+                  "type": "text",
+                  "uuid": "913b2c17-327d-4b28-a5d1-6d091c834ca6"
+                },
+                {
+                  "key": "archivo",
+                  "type": "file",
+                  "uuid": "cac8f966-8a9e-403d-8b3a-efe8e98f504e",
+                  "src": "/C:/Users/pausa/OneDrive/Escritorio/CV PABLO SÁNCHEZ PIQUERAS.pdf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost/api/informes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "informes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Informe",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "30|sCQc7HkWz2OV9I911LVGn0zaDkEkEbYBM5uhlOf8530b2852",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/informes?titulo=Informe con archivo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "informes"
+              ],
+              "query": [
+                {
+                  "key": "titulo",
+                  "value": "Informe con archivo",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "event": [

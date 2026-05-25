@@ -9,20 +9,35 @@ use Illuminate\Support\Facades\Auth;
 class InformeMedicoController extends Controller
 {
     // Listar informes según el rol
-    public function index()
-    {
+    public function index(Request $request)
+        {
         $user = Auth::user();
 
         if ($user->hasRole('admin')) {
-            // Admin ve todos los informes
-            $informes = InformeMedico::all();
+            $query = InformeMedico::query();
         } elseif ($user->hasRole('manager')) {
-            // Manager ve los informes donde es el médico
-            $informes = InformeMedico::where('medico_id', $user->id)->get();
+            $query = InformeMedico::where('medico_id', $user->id);
         } else {
-            // Usuario normal solo ve sus propios informes como paciente
-            $informes = InformeMedico::where('paciente_id', $user->id)->get();
+            $query = InformeMedico::where('paciente_id', $user->id);
         }
+
+        // Filtro por título
+        if ($request->has('titulo')) {
+            $query->where('titulo', 'like', '%' . $request->titulo . '%');
+        }
+
+        // Filtro por paciente (solo admin y manager)
+        if ($request->has('paciente_id') && $user->hasRole(['admin', 'manager'])) {
+            $query->where('paciente_id', $request->paciente_id);
+        }
+
+        // Filtro por médico (solo admin)
+        if ($request->has('medico_id') && $user->hasRole('admin')) {
+            $query->where('medico_id', $request->medico_id);
+        }
+
+        // Paginación
+        $informes = $query->paginate(5);
 
         return response()->json($informes);
     }
@@ -35,16 +50,23 @@ class InformeMedicoController extends Controller
             'diagnostico' => 'required|string',
             'paciente_id' => 'required|integer|exists:users,id',
             'medico_id'   => 'required|integer|exists:users,id',
+            'archivo'     => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         ]);
 
         $tituloSeguro      = strip_tags($request->titulo);
         $diagnosticoSeguro = strip_tags($request->diagnostico);
 
+        $rutaArchivo = null;
+        if ($request->hasFile('archivo')) {
+            $rutaArchivo = $request->file('archivo')->store('informes', 'public');
+        }
+
         $informe = InformeMedico::create([
-            'titulo'      => $tituloSeguro,
-            'diagnostico' => $diagnosticoSeguro,
-            'paciente_id' => $request->paciente_id,
-            'medico_id'   => $request->medico_id,
+            'titulo'       => $tituloSeguro,
+            'diagnostico'  => $diagnosticoSeguro,
+            'paciente_id'  => $request->paciente_id,
+            'medico_id'    => $request->medico_id,
+            'ruta_archivo' => $rutaArchivo,
         ]);
 
         return response()->json([
@@ -70,7 +92,13 @@ class InformeMedicoController extends Controller
             return response()->json(['message' => 'Acceso no autorizado'], 403);
         }
 
-        return response()->json($informe);
+        // Añadimos la URL completa del archivo si existe
+        $data = $informe->toArray();
+        if ($informe->ruta_archivo) {
+            $data['archivo_url'] = asset('storage/' . $informe->ruta_archivo);
+        }
+
+        return response()->json($data);
     }
 
     // Actualizar un informe
