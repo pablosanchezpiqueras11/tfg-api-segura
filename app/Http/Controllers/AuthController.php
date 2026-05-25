@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon; // Necesaria para gestionar los tiempos de bloqueo
+use App\Services\SecurityLogService; // Servicio para registrar eventos de seguridad
 
 class AuthController extends Controller
 {
@@ -63,12 +64,11 @@ class AuthController extends Controller
             $user->increment('intentos_fallidos');
 
             if ($user->intentos_fallidos >= 3) {
-                $user->update([
-                    'bloqueado_hasta' => Carbon::now()->addMinutes(5)
-                ]);
+                $user->update(['bloqueado_hasta' => Carbon::now()->addMinutes(5)]);
+                SecurityLogService::log('USER_LOCKED', $user->id, 'Cuenta bloqueada por múltiples intentos fallidos', $request);
                 return response()->json(['message' => 'Cuenta bloqueada por 5 minutos debido a múltiples fallos.'], 403);
             }
-
+            SecurityLogService::log('LOGIN_FAILED', $user->id, 'Intento de login fallido', $request);
             return response()->json(['message' => 'Credenciales incorrectas'], 401);
         }
 
@@ -92,6 +92,7 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
+        SecurityLogService::log('LOGIN_SUCCESS', $user->id, 'Login correcto', $request);
 
         return response()->json([
             'message' => 'Login correcto',

@@ -14,6 +14,7 @@ use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
+use App\Services\SecurityLogService;
 
 class MfaController extends Controller
 {
@@ -68,6 +69,7 @@ class MfaController extends Controller
         $valid = $google2fa->verifyKey($user->mfa_secret, $request->code);
 
         if (!$valid) {
+            SecurityLogService::log('MFA_FAILED', $user->id, 'Código MFA inválido al activar', $request);
             return response()->json(['message' => 'Código inválido'], 422);
         }
 
@@ -77,6 +79,7 @@ class MfaController extends Controller
 
         // Generamos códigos de recuperación
         $codes = $this->generateRecoveryCodes($user);
+        SecurityLogService::log('MFA_ENABLED', $user->id, 'MFA activado correctamente', $request);
 
         return response()->json([
             'message' => 'MFA activado correctamente',
@@ -97,6 +100,7 @@ class MfaController extends Controller
         $valid = $google2fa->verifyKey($user->mfa_secret, $request->code);
 
         if (!$valid) {
+            SecurityLogService::log('MFA_FAILED', $user->id, 'Código MFA inválido al desactivar', $request);
             return response()->json(['message' => 'Código inválido'], 422);
         }
 
@@ -105,6 +109,7 @@ class MfaController extends Controller
         $user->save();
 
         MfaRecoveryCode::where('user_id', $user->id)->delete();
+        SecurityLogService::log('MFA_DISABLED', $user->id, 'MFA desactivado', $request);
 
         return response()->json(['message' => 'MFA desactivado correctamente']);
     }
@@ -144,6 +149,7 @@ class MfaController extends Controller
         }
 
         if (!$valid) {
+            SecurityLogService::log('MFA_FAILED', $user->id, 'Código MFA inválido en login', $request);
             return response()->json(['message' => 'Código MFA inválido'], 401);
         }
 
@@ -152,6 +158,7 @@ class MfaController extends Controller
         $user->save();
 
         $token = $user->createToken('auth_token')->plainTextToken;
+        SecurityLogService::log('LOGIN_SUCCESS', $user->id, 'Login completado con MFA', $request);
 
         return response()->json([
             'message' => 'Login completado',

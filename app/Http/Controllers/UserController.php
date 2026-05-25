@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\SecurityLog;
 
 class UserController extends Controller
 {
@@ -97,5 +98,14 @@ class UserController extends Controller
         ]);
 
         return response()->json(['message' => 'Usuario desbloqueado correctamente']);
+    }
+
+    public function securityLogs()
+    {
+    $logs = SecurityLog::with('user:id,name,email')
+        ->orderBy('created_at', 'desc')
+        ->paginate(20);
+
+    return response()->json($logs);
     }
 }

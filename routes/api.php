@@ -20,9 +20,12 @@ Route::get('/saludo', function () {
 
 
 // Rutas públicas de autenticación
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/mfa/verify-login', [MfaController::class, 'verifyLogin']);
+// Limitamos a 5 intentos por minuto para evitar ataques de fuerza bruta
+Route::middleware('throttle:5,1')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/mfa/verify-login', [MfaController::class, 'verifyLogin']);
+});
 
 // Rutas protegidas (requieren estar logueado)
 Route::middleware('auth:sanctum')->group(function () {
@@ -53,5 +56,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/users/{id}', [UserController::class, 'destroy']);
         Route::patch('/users/{id}/lock', [UserController::class, 'lock']);
         Route::patch('/users/{id}/unlock', [UserController::class, 'unlock']);
+        Route::get('/security-logs', [UserController::class, 'securityLogs']);
     });
 });

@@ -407,6 +407,35 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Ver Logs de Seguridad",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "37|F0v7YKc5GM8BZJgBjwTHdjd3qVklXQ6HEBbZIUB36134f57f",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/security-logs",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "security-logs"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
