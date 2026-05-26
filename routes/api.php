@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InformeMedicoController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
+
 
 // Ruta de prueba
 Route::get('/saludo', function () {
@@ -16,32 +16,16 @@ Route::get('/saludo', function () {
     ]);
 });
 
-// Rutas públicas de autenticación
+// Rutas públicas de autenticación (sin rate limiting)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Rutas protegidas (requieren estar logueado)
-Route::middleware('auth:sanctum')->group(function () {
 
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+// Rutas de informes médicos
+Route::get('/informes', [InformeMedicoController::class, 'index']);
+Route::post('/informes', [InformeMedicoController::class, 'store']);
+Route::get('/informes/{id}', [InformeMedicoController::class, 'show']);
+Route::put('/informes/{id}', [InformeMedicoController::class, 'update']);
+Route::delete('/informes/{id}', [InformeMedicoController::class, 'destroy']);
 
-    // Rutas de informes médicos
-    Route::get('/informes', [InformeMedicoController::class, 'index']);
-    Route::post('/informes', [InformeMedicoController::class, 'store']);
-    Route::get('/informes/{id}', [InformeMedicoController::class, 'show']);
-    Route::put('/informes/{id}', [InformeMedicoController::class, 'update']);
-    Route::delete('/informes/{id}', [InformeMedicoController::class, 'destroy']);
-
-    // Rutas solo para administradores
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/users', [UserController::class, 'index']);
-        Route::get('/users/{id}', [UserController::class, 'show']);
-        Route::put('/users/{id}', [UserController::class, 'update']);
-        Route::delete('/users/{id}', [UserController::class, 'destroy']);
-        Route::patch('/users/{id}/lock', [UserController::class, 'lock']);
-        Route::patch('/users/{id}/unlock', [UserController::class, 'unlock']);
-    });
-});
+  
