@@ -48,7 +48,7 @@ class AuthController extends Controller
 
         // Mensaje que revela si el usuario existe o no (enumeración)
         if (!$user) {
-            return response()->json(['message' => 'Credenciales incorrectas'], 401);
+            return response()->json(['message' => 'Usuario no encontrado'], 401);
         }
         if (!Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Contraseña incorrecta'], 401);
