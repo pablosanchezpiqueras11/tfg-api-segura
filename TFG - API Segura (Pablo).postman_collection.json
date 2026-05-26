@@ -52,10 +52,10 @@
       ]
     },
     {
-      "name": "Versión Vulnerable",
+      "name": "Informes Básicos",
       "item": [
         {
-          "name": "Crear Informe (Vulnerable)",
+          "name": "Crear Informe",
           "event": [
             {
               "listen": "test",
@@ -115,7 +115,7 @@
           "response": []
         },
         {
-          "name": "Listar Informe (Vulnerable)",
+          "name": "Listar Informe",
           "event": [
             {
               "listen": "test",
@@ -640,6 +640,89 @@
                   "value": "Informe con archivo",
                   "type": "text"
                 }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Versión Vulnerable",
+      "item": [
+        {
+          "name": "Listar Informes (Vulnerable)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/informes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "informes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Informe (Vulnerable - IDOR)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/informes/5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "informes",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Informe (Vulnerable)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/informes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "informes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Borrar Informe (Vulnerable)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/informes/5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "informes",
+                "5"
               ]
             }
           },
