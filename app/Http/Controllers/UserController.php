@@ -9,6 +9,17 @@ use App\Models\SecurityLog;
 
 class UserController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/users",
+     *     summary="Listar todos los usuarios",
+     *     tags={"Usuarios (Admin)"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(response=200, description="Lista de usuarios"),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=403, description="Sin permisos de administrador")
+     * )
+     */
     // Listar todos los usuarios (solo admin)
     public function index()
     {
@@ -16,6 +27,22 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/users/{id}",
+     *     summary="Ver un usuario específico",
+     *     tags={"Usuarios (Admin)"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Usuario encontrado"),
+     *     @OA\Response(response=404, description="Usuario no encontrado")
+     * )
+     */
     // Ver un usuario específico (solo admin)
     public function show($id)
     {
@@ -27,6 +54,30 @@ class UserController extends Controller
 
         return response()->json($user);
     }
+
+    /**
+     * @OA\Put(
+     *     path="/users/{id}",
+     *     summary="Actualizar un usuario",
+     *     tags={"Usuarios (Admin)"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="Nuevo nombre"),
+     *             @OA\Property(property="email", type="string", example="nuevo@email.com"),
+     *             @OA\Property(property="role", type="string", example="manager")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Usuario actualizado"),
+     *     @OA\Response(response=404, description="Usuario no encontrado")
+     * )
+     */
 
     // Editar un usuario (solo admin)
     public function update(Request $request, $id)
@@ -55,6 +106,23 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/users/{id}",
+     *     summary="Eliminar un usuario",
+     *     tags={"Usuarios (Admin)"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Usuario eliminado"),
+     *     @OA\Response(response=404, description="Usuario no encontrado")
+     * )
+     */
+
     // Eliminar un usuario (solo admin)
     public function destroy($id)
     {
@@ -69,6 +137,23 @@ class UserController extends Controller
         return response()->json(['message' => 'Usuario eliminado correctamente']);
     }
 
+    /**
+     * @OA\Patch(
+     *     path="/users/{id}/lock",
+     *     summary="Bloquear un usuario",
+     *     tags={"Usuarios (Admin)"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Usuario bloqueado"),
+     *     @OA\Response(response=404, description="Usuario no encontrado")
+     * )
+     */
+
     // Bloquear un usuario (solo admin)
     public function lock($id)
     {
@@ -82,6 +167,23 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Usuario bloqueado correctamente']);
     }
+
+    /**
+     * @OA\Patch(
+     *     path="/users/{id}/unlock",
+     *     summary="Desbloquear un usuario",
+     *     tags={"Usuarios (Admin)"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Usuario desbloqueado"),
+     *     @OA\Response(response=404, description="Usuario no encontrado")
+     * )
+     */
 
     // Desbloquear un usuario (solo admin)
     public function unlock($id)
@@ -99,6 +201,17 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Usuario desbloqueado correctamente']);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/security-logs",
+     *     summary="Ver logs de seguridad",
+     *     tags={"Usuarios (Admin)"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(response=200, description="Lista de logs de seguridad paginada"),
+     *     @OA\Response(response=403, description="Sin permisos de administrador")
+     * )
+     */
 
     public function securityLogs()
     {

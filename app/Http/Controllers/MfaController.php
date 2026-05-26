@@ -18,6 +18,18 @@ use App\Services\SecurityLogService;
 
 class MfaController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/mfa/setup",
+     *     summary="Iniciar configuración de MFA",
+     *     tags={"MFA"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(response=200, description="Secreto y QR generados"),
+     *     @OA\Response(response=400, description="MFA ya está activado"),
+     *     @OA\Response(response=401, description="No autenticado")
+     * )
+     */
+    
     // Paso 1: Generar secreto y QR para activar MFA
     public function setup(Request $request)
     {
@@ -56,6 +68,24 @@ class MfaController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/mfa/confirm",
+     *     summary="Confirmar y activar MFA",
+     *     tags={"MFA"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"code"},
+     *             @OA\Property(property="code", type="string", example="123456")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="MFA activado correctamente"),
+     *     @OA\Response(response=422, description="Código inválido")
+     * )
+     */
+
     // Paso 2: Confirmar MFA con código TOTP
     public function confirm(Request $request)
     {
@@ -87,6 +117,24 @@ class MfaController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/mfa/disable",
+     *     summary="Desactivar MFA",
+     *     tags={"MFA"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"code"},
+     *             @OA\Property(property="code", type="string", example="123456")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="MFA desactivado correctamente"),
+     *     @OA\Response(response=422, description="Código inválido")
+     * )
+     */
+
     // Desactivar MFA
     public function disable(Request $request)
     {
@@ -113,6 +161,24 @@ class MfaController extends Controller
 
         return response()->json(['message' => 'MFA desactivado correctamente']);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/mfa/verify-login",
+     *     summary="Verificar código MFA durante el login",
+     *     tags={"MFA"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"temporary_token","code"},
+     *             @OA\Property(property="temporary_token", type="string", example="abc123..."),
+     *             @OA\Property(property="code", type="string", example="123456")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Login completado con éxito"),
+     *     @OA\Response(response=401, description="Token o código inválido")
+     * )
+     */
 
     // Verificar código MFA en el login
     public function verifyLogin(Request $request)
@@ -166,6 +232,17 @@ class MfaController extends Controller
             'token_type' => 'Bearer',
         ]);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/mfa/recovery-codes/regenerate",
+     *     summary="Regenerar códigos de recuperación MFA",
+     *     tags={"MFA"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(response=200, description="Códigos regenerados"),
+     *     @OA\Response(response=400, description="MFA no está activado")
+     * )
+     */
 
     // Regenerar códigos de recuperación
     public function regenerateRecoveryCodes(Request $request)

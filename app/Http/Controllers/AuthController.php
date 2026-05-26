@@ -11,6 +11,25 @@ use App\Services\SecurityLogService; // Servicio para registrar eventos de segur
 
 class AuthController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/register",
+     *     summary="Registrar un nuevo usuario",
+     *     tags={"Autenticación"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name","email","password"},
+     *             @OA\Property(property="name", type="string", example="Pablo Sánchez"),
+     *             @OA\Property(property="email", type="string", example="pablo@ejemplo.com"),
+     *             @OA\Property(property="password", type="string", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Usuario registrado con éxito"),
+     *     @OA\Response(response=422, description="Datos de validación incorrectos")
+     * )
+     */
+
     // Registro de usuario(primero algo funcional, mas adelante se añadirá validación y roles)
     public function register(Request $request)
     {
@@ -38,6 +57,26 @@ class AuthController extends Controller
         ], 201);
     }
     
+    /**
+     * @OA\Post(
+     *     path="/login",
+     *     summary="Iniciar sesión",
+     *     tags={"Autenticación"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","password"},
+     *             @OA\Property(property="email", type="string", example="admin@test.com"),
+     *             @OA\Property(property="password", type="string", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Login correcto"),
+     *     @OA\Response(response=401, description="Credenciales incorrectas"),
+     *     @OA\Response(response=403, description="Cuenta bloqueada"),
+     *     @OA\Response(response=429, description="Demasiadas peticiones")
+     * )
+     */
+
     public function login(Request $request)
     {
         $request->validate([
@@ -101,6 +140,16 @@ class AuthController extends Controller
         ]);
     }
 
+     /**
+     * @OA\Post(
+     *     path="/logout",
+     *     summary="Cerrar sesión",
+     *     tags={"Autenticación"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(response=200, description="Sesión cerrada con éxito"),
+     *     @OA\Response(response=401, description="No autenticado")
+     * )
+     */
     public function logout(Request $request)
 {
    // Verificamos que el usuario tenga un token antes de intentar borrarlo
