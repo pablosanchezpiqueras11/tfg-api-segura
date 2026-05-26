@@ -105,6 +105,7 @@ class AuthController extends Controller
 {
    // Verificamos que el usuario tenga un token antes de intentar borrarlo
     if ($request->user()) {
+        SecurityLogService::log('LOGOUT', $request->user()->id, 'Sesión cerrada', $request);
         $request->user()->currentAccessToken()->delete();
         
         return response()->json([
