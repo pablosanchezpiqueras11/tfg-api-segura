@@ -7,6 +7,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MfaController;
 
+// Ruta necesaria para manejar autenticación fallida
+Route::get('/login', function () {
+    return response()->json(['message' => 'No autenticado'], 401);
+})->name('login');
+
 // Ruta de prueba
 Route::get('/saludo', function () {
     return response()->json([
