@@ -40,7 +40,8 @@ class UserController extends Controller
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(response=200, description="Usuario encontrado"),
-     *     @OA\Response(response=404, description="Usuario no encontrado")
+     *     @OA\Response(response=404, description="Usuario no encontrado"),
+     *     @OA\Response(response=403, description="Sin permisos de administrador")
      * )
      */
     // Ver un usuario específico (solo admin)
@@ -75,7 +76,8 @@ class UserController extends Controller
      *         )
      *     ),
      *     @OA\Response(response=200, description="Usuario actualizado"),
-     *     @OA\Response(response=404, description="Usuario no encontrado")
+     *     @OA\Response(response=404, description="Usuario no encontrado"),
+     *     @OA\Response(response=403, description="Sin permisos de administrador")
      * )
      */
 
@@ -119,7 +121,8 @@ class UserController extends Controller
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(response=200, description="Usuario eliminado"),
-     *     @OA\Response(response=404, description="Usuario no encontrado")
+     *     @OA\Response(response=404, description="Usuario no encontrado"),
+     *     @OA\Response(response=403, description="Sin permisos de administrador")
      * )
      */
 
@@ -150,7 +153,8 @@ class UserController extends Controller
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(response=200, description="Usuario bloqueado"),
-     *     @OA\Response(response=404, description="Usuario no encontrado")
+     *     @OA\Response(response=404, description="Usuario no encontrado"),
+     *     @OA\Response(response=403, description="Sin permisos de administrador")
      * )
      */
 
@@ -181,7 +185,8 @@ class UserController extends Controller
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(response=200, description="Usuario desbloqueado"),
-     *     @OA\Response(response=404, description="Usuario no encontrado")
+     *     @OA\Response(response=404, description="Usuario no encontrado"),
+     *     @OA\Response(response=403, description="Sin permisos de administrador")
      * )
      */
 

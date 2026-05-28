@@ -590,6 +590,9 @@
                     },
                     "404": {
                         "description": "Usuario no encontrado"
+                    },
+                    "403": {
+                        "description": "Sin permisos de administrador"
                     }
                 },
                 "security": [
@@ -643,6 +646,9 @@
                     },
                     "404": {
                         "description": "Usuario no encontrado"
+                    },
+                    "403": {
+                        "description": "Sin permisos de administrador"
                     }
                 },
                 "security": [
@@ -673,6 +679,9 @@
                     },
                     "404": {
                         "description": "Usuario no encontrado"
+                    },
+                    "403": {
+                        "description": "Sin permisos de administrador"
                     }
                 },
                 "security": [
@@ -705,6 +714,9 @@
                     },
                     "404": {
                         "description": "Usuario no encontrado"
+                    },
+                    "403": {
+                        "description": "Sin permisos de administrador"
                     }
                 },
                 "security": [
@@ -737,6 +749,9 @@
                     },
                     "404": {
                         "description": "Usuario no encontrado"
+                    },
+                    "403": {
+                        "description": "Sin permisos de administrador"
                     }
                 },
                 "security": [
