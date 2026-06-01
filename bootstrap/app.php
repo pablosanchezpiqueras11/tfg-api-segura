@@ -30,4 +30,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (\Illuminate\Http\Exceptions\ThrottleRequestsException $e, $request) {
             return response()->json(['message' => 'Demasiadas peticiones. Inténtalo más tarde.'], 429);
         });
+
+        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, $request) {
+        return response()->json(['message' => 'Datos de entrada inválidos','errors' => $e->errors()], 422);
+        });
     })->create();
