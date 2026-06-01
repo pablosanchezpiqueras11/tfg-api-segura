@@ -261,7 +261,544 @@
     },
     {
       "name": "Pruebas de Ataque",
-      "item": []
+      "item": [
+        {
+          "name": "Fuerza Bruta",
+          "item": [
+            {
+              "name": "Fuerza Bruta (Vulnerable)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"admin@test.com\",\r\n    \"password\": \"contraseñamalvada\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost/api/login",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Fuerza Bruta (Segura)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"admin@test.com\",\r\n    \"password\": \"contraseñamalvada\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost/api/login",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Bloqueo Cuenta (Vulnerable)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"admin@test.com\",\r\n    \"password\": \"contraseñamalvada\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost/api/login",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Bloqueo Cuenta (Segura)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"admin@test.com\",\r\n    \"password\": \"contraseñamalvada\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost/api/login",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Token JWT Manipulado",
+          "item": [
+            {
+              "name": "Token Manipulado (Vulnerable)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "49|DZQgxUG75dRNbSKIsvSYG2aMlaCrTTIUU8xRuDmucf31XXXX",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost/api/informes",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "informes"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Token Manipulado (Segura)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "49|DZQgxUG75dRNbSKIsvSYG2aMlaCrTTIUU8xRuDmucf31XXXX",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost/api/informes",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "informes"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Acceso Sin Token",
+          "item": [
+            {
+              "name": "Acceso Sin Token (Vulnerable)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost/api/informes",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "informes"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Acceso Sin Token (Segura)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost/api/informes",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "informes"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Escalada de privilegios",
+          "item": [
+            {
+              "name": "Escala de privilegios (Vulnerable)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "50|oCZduP6we6Jdl7iwsDbt5V2nkkqIRg576zjQ90cacf72d468",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost/api/users",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Escalada de privilegios (Segura)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "50|oCZduP6we6Jdl7iwsDbt5V2nkkqIRg576zjQ90cacf72d468",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost/api/users",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "IDOR",
+          "item": [
+            {
+              "name": "IDOR (Vulnerable)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "50|oCZduP6we6Jdl7iwsDbt5V2nkkqIRg576zjQ90cacf72d468",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost/api/informes/3",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "informes",
+                    "3"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "IDOR (Segura)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "50|oCZduP6we6Jdl7iwsDbt5V2nkkqIRg576zjQ90cacf72d468",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost/api/informes/3",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "informes",
+                    "3"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "MFA Incorrecto",
+          "item": [
+            {
+              "name": "MFA Incorrecto (Vulnerable)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"temporary_token\": \"Bff4BsO7dvFysamgmb82jarjUtbvrTOj662vAlRJmw9B4ZRLrrCylRgS3OzxOKo4\",\r\n    \"code\": \"000000\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost/api/mfa/verify-login",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "mfa",
+                    "verify-login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "MFA Incorrecto (Segura)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"temporary_token\": \"Bff4BsO7dvFysamgmb82jarjUtbvrTOj662vAlRJmw9B4ZRLrrCylRgS3OzxOKo4\",\r\n    \"code\": \"000000\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost/api/mfa/verify-login",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "mfa",
+                    "verify-login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Abuso de Peticiones (Rate Limiting)",
+          "item": [
+            {
+              "name": "Rate Limiting (Vulnerable)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Test\",\r\n    \"email\": \"admin@test.com\",\r\n    \"password\": \"password123\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost/api/login",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Rate Limiting (Segura)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Test\",\r\n    \"email\": \"admin@test.com\",\r\n    \"password\": \"password123\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost/api/login",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Inyección SQL",
+          "item": [
+            {
+              "name": "Inyección SQL (Vulnerable)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"titulo\": \"Informe test\",\r\n    \"diagnostico\": \"' OR '1'='1'; DROP TABLE users; --\",\r\n    \"paciente_id\": 1,\r\n    \"medico_id\": 1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost/api/informes",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "informes"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Inyección SQL (Segura)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"' OR '1'='1\",\r\n    \"password\": \"' OR '1'='1\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost/api/login",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [
+                    "api",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "Autenticación",
@@ -313,7 +850,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"admin@test.com\",\r\n    \"password\": \"password123\"\r\n}",
+              "raw": "{\r\n    \"email\": \"pablo2@ejemplo.com\",\r\n    \"password\": \"contrasenya123\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -450,7 +987,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "28|VlW5qlO5oifk0v6VTo4pRe1eRBJH4MzM0P8qEpv267769c1c",
+                  "value": "",
                   "type": "string"
                 }
               ]
