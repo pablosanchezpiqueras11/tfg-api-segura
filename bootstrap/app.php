@@ -22,4 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) {
             return response()->json(['message' => 'No autenticado'], 401);
         });
+
+        $exceptions->render(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
+            return response()->json(['message' => 'No tienes permisos para realizar esta acción'], 403);
+        });
     })->create();
