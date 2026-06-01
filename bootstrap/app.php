@@ -26,4 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
             return response()->json(['message' => 'No tienes permisos para realizar esta acción'], 403);
         });
+
+        $exceptions->render(function (\Illuminate\Http\Exceptions\ThrottleRequestsException $e, $request) {
+            return response()->json(['message' => 'Demasiadas peticiones. Inténtalo más tarde.'], 429);
+        });
     })->create();
