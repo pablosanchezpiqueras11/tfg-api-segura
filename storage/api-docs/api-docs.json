@@ -131,6 +131,127 @@
                 ]
             }
         },
+        "/token/refresh": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Renovar token de acceso",
+                "operationId": "d76841c19a946fb5c4b4c8e86284fa07",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "refresh_token"
+                                ],
+                                "properties": {
+                                    "refresh_token": {
+                                        "type": "string",
+                                        "example": "abc123..."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Token renovado correctamente"
+                    },
+                    "401": {
+                        "description": "Refresh token inválido o caducado"
+                    }
+                }
+            }
+        },
+        "/token/revoke": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Revocar refresh token",
+                "operationId": "2c4146dca7ddb0001039a5b65a44646d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "refresh_token"
+                                ],
+                                "properties": {
+                                    "refresh_token": {
+                                        "type": "string",
+                                        "example": "abc123..."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Token revocado correctamente"
+                    },
+                    "401": {
+                        "description": "Refresh token inválido"
+                    }
+                }
+            }
+        },
+        "/change-password": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Cambiar contraseña",
+                "operationId": "648fdff74fc31cc68dea407765a95d75",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "current_password",
+                                    "new_password"
+                                ],
+                                "properties": {
+                                    "current_password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "example": "nuevaPassword123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Contraseña cambiada correctamente"
+                    },
+                    "401": {
+                        "description": "Contraseña actual incorrecta"
+                    },
+                    "422": {
+                        "description": "Datos incorrectos"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/informes": {
             "get": {
                 "tags": [
@@ -542,6 +663,133 @@
                 ]
             }
         },
+        "/mfa/setup-required": {
+            "post": {
+                "tags": [
+                    "MFA"
+                ],
+                "summary": "Configurar MFA obligatorio para administradores",
+                "operationId": "e06d9c6e0ab21d6fb0515b187677a4f5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "temporary_token"
+                                ],
+                                "properties": {
+                                    "temporary_token": {
+                                        "type": "string",
+                                        "example": "abc123..."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "QR generado para activar MFA"
+                    },
+                    "401": {
+                        "description": "Token inválido"
+                    },
+                    "400": {
+                        "description": "MFA ya está activado"
+                    }
+                }
+            }
+        },
+        "/mfa/confirm-required": {
+            "post": {
+                "tags": [
+                    "MFA"
+                ],
+                "summary": "Confirmar MFA obligatorio y obtener acceso",
+                "operationId": "476903099eb8b44f93aa68ba6dbb1ef5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "temporary_token",
+                                    "code"
+                                ],
+                                "properties": {
+                                    "temporary_token": {
+                                        "type": "string",
+                                        "example": "abc123..."
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "MFA activado y acceso concedido"
+                    },
+                    "401": {
+                        "description": "Token o código inválido"
+                    },
+                    "422": {
+                        "description": "Código inválido"
+                    }
+                }
+            }
+        },
+        "/mfa/recovery-codes/use": {
+            "post": {
+                "tags": [
+                    "MFA"
+                ],
+                "summary": "Usar código de recuperación MFA",
+                "operationId": "707049646ef6754d49970c09370f2b02",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "code"
+                                ],
+                                "properties": {
+                                    "code": {
+                                        "type": "string",
+                                        "example": "XXXX-XXXX"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Código de recuperación usado correctamente"
+                    },
+                    "401": {
+                        "description": "Código inválido o ya usado"
+                    },
+                    "400": {
+                        "description": "MFA no está activado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/users": {
             "get": {
                 "tags": [
@@ -558,6 +806,62 @@
                     },
                     "403": {
                         "description": "Sin permisos de administrador"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Usuarios (Admin)"
+                ],
+                "summary": "Crear un nuevo usuario (Admin)",
+                "operationId": "a1fce870c566eb5fc0cf3178ec5d2fed",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Nuevo Usuario"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "nuevo@email.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "user"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuario creado correctamente"
+                    },
+                    "403": {
+                        "description": "Sin permisos de administrador"
+                    },
+                    "422": {
+                        "description": "Datos incorrectos"
                     }
                 },
                 "security": [
@@ -774,6 +1078,70 @@
                     },
                     "403": {
                         "description": "Sin permisos de administrador"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/me": {
+            "get": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Ver perfil del usuario autenticado",
+                "operationId": "9174a569ffd5f82da6d1982c9382d3ba",
+                "responses": {
+                    "200": {
+                        "description": "Perfil del usuario"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Editar perfil del usuario autenticado",
+                "operationId": "e593307ad828222d79e9e798c93b55af",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Nuevo nombre"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "nuevo@email.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Perfil actualizado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "422": {
+                        "description": "Datos incorrectos"
                     }
                 },
                 "security": [

@@ -62,6 +62,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // Cambio de contraseña
     Route::post('/change-password', [AuthController::class, 'changePassword']);
 
+    // Perfil del usuario autenticado
+    Route::get('/me', [UserController::class, 'me']);
+    Route::put('/me', [UserController::class, 'updateMe']);
+    
+    // Rutas para usar códigos de recuperación MFA
+    Route::post('/mfa/recovery-codes/use', [MfaController::class, 'useRecoveryCode']);
+
     // Rutas solo para administradores
     Route::middleware('role:admin')->group(function () {
         Route::get('/users', [UserController::class, 'index']);
@@ -71,6 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/users/{id}/lock', [UserController::class, 'lock']);
         Route::patch('/users/{id}/unlock', [UserController::class, 'unlock']);
         Route::get('/security-logs', [UserController::class, 'securityLogs']);
+        Route::post('/users', [UserController::class, 'store']);
     });
 
     

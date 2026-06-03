@@ -291,9 +291,26 @@ class MfaController extends Controller
         return $codes;
     }
 
+    /**
+     * @OA\Post(
+     *     path="/mfa/setup-required",
+     *     summary="Configurar MFA obligatorio para administradores",
+     *     tags={"MFA"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"temporary_token"},
+     *             @OA\Property(property="temporary_token", type="string", example="abc123...")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="QR generado para activar MFA"),
+     *     @OA\Response(response=401, description="Token inválido"),
+     *     @OA\Response(response=400, description="MFA ya está activado")
+     * )
+     */
     // Funciones para MFA obligatorio en administradores
     public function setupRequired(Request $request)
-{
+    {
     $request->validate([
         'temporary_token' => 'required|string',
     ]);
@@ -333,10 +350,29 @@ class MfaController extends Controller
         'qr_code' => base64_encode($qrSvg),
         'temporary_token' => $request->temporary_token,
     ]);
-}
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/mfa/confirm-required",
+     *     summary="Confirmar MFA obligatorio y obtener acceso",
+     *     tags={"MFA"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"temporary_token","code"},
+     *             @OA\Property(property="temporary_token", type="string", example="abc123..."),
+     *             @OA\Property(property="code", type="string", example="123456")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="MFA activado y acceso concedido"),
+     *     @OA\Response(response=401, description="Token o código inválido"),
+     *     @OA\Response(response=422, description="Código inválido")
+     * )
+     */
     // Función para confirmar MFA obligatorio en administradores
     public function confirmRequired(Request $request)
-{
+    {
     $request->validate([
         'temporary_token' => 'required|string',
         'code' => 'required|string|size:6',
@@ -378,5 +414,50 @@ class MfaController extends Controller
         'token_type' => 'Bearer',
         'recovery_codes' => $codes,
     ]);
-}
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/mfa/recovery-codes/use",
+     *     summary="Usar código de recuperación MFA",
+     *     tags={"MFA"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"code"},
+     *             @OA\Property(property="code", type="string", example="XXXX-XXXX")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Código de recuperación usado correctamente"),
+     *     @OA\Response(response=401, description="Código inválido o ya usado"),
+     *     @OA\Response(response=400, description="MFA no está activado")
+     * )
+     */
+    public function useRecoveryCode(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        $user = Auth::user();
+
+        if (!$user->mfa_enabled) {
+            return response()->json(['message' => 'MFA no está activado'], 400);
+        }
+
+        $recovery = MfaRecoveryCode::where('user_id', $user->id)
+            ->whereNull('used_at')
+            ->get()
+            ->first(fn($r) => Hash::check($request->code, $r->code_hash));
+
+        if (!$recovery) {
+            return response()->json(['message' => 'Código de recuperación inválido o ya usado'], 401);
+        }
+
+        $recovery->used_at = now();
+        $recovery->save();
+
+        return response()->json(['message' => 'Código de recuperación usado correctamente']);
+    }
 }

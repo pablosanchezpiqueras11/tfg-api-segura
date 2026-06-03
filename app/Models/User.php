@@ -32,6 +32,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'mfa_secret',
+        'mfa_temp_token',
     ];
 
     /**

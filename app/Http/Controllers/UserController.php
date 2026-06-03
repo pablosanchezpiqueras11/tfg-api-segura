@@ -226,4 +226,97 @@ class UserController extends Controller
 
     return response()->json($logs);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/me",
+     *     summary="Ver perfil del usuario autenticado",
+     *     tags={"Autenticación"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(response=200, description="Perfil del usuario"),
+     *     @OA\Response(response=401, description="No autenticado")
+     * )
+     */
+    public function me(Request $request)
+    {
+        return response()->json($request->user()->load('roles'));
+    }
+
+    /**
+     * @OA\Put(
+     *     path="/me",
+     *     summary="Editar perfil del usuario autenticado",
+     *     tags={"Autenticación"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="Nuevo nombre"),
+     *             @OA\Property(property="email", type="string", example="nuevo@email.com")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Perfil actualizado"),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Datos incorrectos")
+     * )
+     */
+    public function updateMe(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update($request->only('name', 'email'));
+
+        return response()->json([
+            'message' => 'Perfil actualizado correctamente',
+            'data' => $user->load('roles')
+        ]);
+    }
+
+        /**
+     * @OA\Post(
+     *     path="/users",
+     *     summary="Crear un nuevo usuario (Admin)",
+     *     tags={"Usuarios (Admin)"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name","email","password"},
+     *             @OA\Property(property="name", type="string", example="Nuevo Usuario"),
+     *             @OA\Property(property="email", type="string", example="nuevo@email.com"),
+     *             @OA\Property(property="password", type="string", example="password123"),
+     *             @OA\Property(property="role", type="string", example="user")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Usuario creado correctamente"),
+     *     @OA\Response(response=403, description="Sin permisos de administrador"),
+     *     @OA\Response(response=422, description="Datos incorrectos")
+     * )
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
+            'role' => 'sometimes|string|in:admin,manager,user',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+        ]);
+
+        $user->assignRole($request->role ?? 'user');
+
+        return response()->json([
+            'message' => 'Usuario creado correctamente',
+            'data' => $user->load('roles')
+        ], 201);
+    }
 }

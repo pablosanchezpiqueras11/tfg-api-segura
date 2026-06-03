@@ -52,7 +52,7 @@
       ]
     },
     {
-      "name": "Informes Básicos",
+      "name": "Informes",
       "item": [
         {
           "name": "Crear Informe",
@@ -254,6 +254,126 @@
               ]
             },
             "description": "DELETE también es vulnerable porque cualquier persona que sepa la URL puede borrar un informe médico real sin ser administrador.EndFragment  \nStartFragmentSe han implementado tests unitarios en Postman para asegurar la integridad de las respuestas en cada fase del desarrolloEndFragment"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Informe con Archivo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "30|sCQc7HkWz2OV9I911LVGn0zaDkEkEbYBM5uhlOf8530b2852",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "titulo",
+                  "value": "Informe con archivo",
+                  "type": "text",
+                  "uuid": "d0326036-ae6a-49bb-a681-9f876f9348aa"
+                },
+                {
+                  "key": "diagnostico",
+                  "value": "Diagnóstico de prueba",
+                  "type": "text",
+                  "uuid": "f2cdb433-463f-4251-af2c-697930d43784"
+                },
+                {
+                  "key": "paciente_id",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "766f59e2-b0e3-4bf5-bbdf-cc5a3eb15f9d"
+                },
+                {
+                  "key": "medico_id",
+                  "value": "6",
+                  "type": "text",
+                  "uuid": "913b2c17-327d-4b28-a5d1-6d091c834ca6"
+                },
+                {
+                  "key": "archivo",
+                  "type": "file",
+                  "uuid": "cac8f966-8a9e-403d-8b3a-efe8e98f504e",
+                  "src": "/C:/Users/pausa/OneDrive/Escritorio/CV PABLO SÁNCHEZ PIQUERAS.pdf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost/api/informes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "informes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Informe (con filtros y paginación)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "30|sCQc7HkWz2OV9I911LVGn0zaDkEkEbYBM5uhlOf8530b2852",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/informes?titulo=Informe con archivo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "informes"
+              ],
+              "query": [
+                {
+                  "key": "titulo",
+                  "value": "Informe con archivo",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Informe",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/informes/{id}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "informes",
+                "{id}"
+              ]
+            }
           },
           "response": []
         }
@@ -987,6 +1107,33 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Ver Mi Perfil",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Editar Mi Perfil",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "me"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -994,7 +1141,7 @@
       "name": "Roles y Permisos",
       "item": [
         {
-          "name": "Listar Usuarios (Solo Admin)",
+          "name": "Listar Usuarios (Admin)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -1046,6 +1193,183 @@
               "path": [
                 "api",
                 "security-logs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Usuario (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "114|Um0YNIgihLTetDKxNeQtwbHAzldXDXl0VfIz7PbGd187d0a8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Pablo Bloqueado\",\r\n    \"email\": \"pablo@bloqueado.com\",\r\n    \"password\": \"password123\",\r\n    \"role\": \"user\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Usuario (Admin)",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Usuario (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "114|Um0YNIgihLTetDKxNeQtwbHAzldXDXl0VfIz7PbGd187d0a8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Pabloo Sánchez\",\r\n    \"role\": \"manager\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost/api/users/3",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "users",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Usuario (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "114|Um0YNIgihLTetDKxNeQtwbHAzldXDXl0VfIz7PbGd187d0a8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/users/11",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "users",
+                "11"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Bloquear Usuario (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "114|Um0YNIgihLTetDKxNeQtwbHAzldXDXl0VfIz7PbGd187d0a8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/users/12/lock",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "users",
+                "12",
+                "lock"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Desbloquear Usuario (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "114|Um0YNIgihLTetDKxNeQtwbHAzldXDXl0VfIz7PbGd187d0a8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/users/12/unlock",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "users",
+                "12",
+                "unlock"
               ]
             }
           },
@@ -1126,6 +1450,26 @@
           "response": []
         },
         {
+          "name": "Desactivar MFA",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/mfa/disable",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "mfa",
+                "disable"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "MFA - Verificar Login",
           "request": {
             "method": "POST",
@@ -1149,6 +1493,27 @@
                 "api",
                 "mfa",
                 "verify-login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Regenerar Códigos de Recuperación",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/mfa/recovery-codes/regenerate",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "mfa",
+                "recovery-codes",
+                "regenerate"
               ]
             }
           },
@@ -1202,107 +1567,23 @@
             }
           },
           "response": []
-        }
-      ]
-    },
-    {
-      "name": "Informes",
-      "item": [
-        {
-          "name": "Crear Informe con Archivo",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "30|sCQc7HkWz2OV9I911LVGn0zaDkEkEbYBM5uhlOf8530b2852",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "titulo",
-                  "value": "Informe con archivo",
-                  "type": "text",
-                  "uuid": "d0326036-ae6a-49bb-a681-9f876f9348aa"
-                },
-                {
-                  "key": "diagnostico",
-                  "value": "Diagnóstico de prueba",
-                  "type": "text",
-                  "uuid": "f2cdb433-463f-4251-af2c-697930d43784"
-                },
-                {
-                  "key": "paciente_id",
-                  "value": "2",
-                  "type": "text",
-                  "uuid": "766f59e2-b0e3-4bf5-bbdf-cc5a3eb15f9d"
-                },
-                {
-                  "key": "medico_id",
-                  "value": "6",
-                  "type": "text",
-                  "uuid": "913b2c17-327d-4b28-a5d1-6d091c834ca6"
-                },
-                {
-                  "key": "archivo",
-                  "type": "file",
-                  "uuid": "cac8f966-8a9e-403d-8b3a-efe8e98f504e",
-                  "src": "/C:/Users/pausa/OneDrive/Escritorio/CV PABLO SÁNCHEZ PIQUERAS.pdf"
-                }
-              ]
-            },
-            "url": {
-              "raw": "http://localhost/api/informes",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "path": [
-                "api",
-                "informes"
-              ]
-            }
-          },
-          "response": []
         },
         {
-          "name": "Listar Informe",
+          "name": "Usar Código de Recuperación",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "30|sCQc7HkWz2OV9I911LVGn0zaDkEkEbYBM5uhlOf8530b2852",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
+            "method": "POST",
             "header": [],
             "url": {
-              "raw": "http://localhost/api/informes?titulo=Informe con archivo",
+              "raw": "http://localhost/api/mfa/recovery-codes/use",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "path": [
                 "api",
-                "informes"
-              ],
-              "query": [
-                {
-                  "key": "titulo",
-                  "value": "Informe con archivo",
-                  "type": "text"
-                }
+                "mfa",
+                "recovery-codes",
+                "use"
               ]
             }
           },
