@@ -266,4 +266,48 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Refresh token revocado correctamente']);
 }
+
+    /**
+     * @OA\Post(
+     *     path="/change-password",
+     *     summary="Cambiar contraseña",
+     *     tags={"Autenticación"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"current_password","new_password"},
+     *             @OA\Property(property="current_password", type="string", example="password123"),
+     *             @OA\Property(property="new_password", type="string", example="nuevaPassword123")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Contraseña cambiada correctamente"),
+     *     @OA\Response(response=401, description="Contraseña actual incorrecta"),
+     *     @OA\Response(response=422, description="Datos incorrectos")
+     * )
+     */
+    public function changePassword(Request $request)
+{
+        $request->validate([
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:8|different:current_password',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'La contraseña actual es incorrecta'], 401);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        // Revocamos todos los tokens para forzar nuevo login
+        $user->tokens()->delete();
+
+        SecurityLogService::log('PASSWORD_CHANGED', $user->id, 'Contraseña cambiada correctamente', $request);
+
+        return response()->json(['message' => 'Contraseña cambiada correctamente. Por seguridad, inicia sesión de nuevo.']);
+}
 }

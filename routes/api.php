@@ -55,6 +55,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/mfa/disable', [MfaController::class, 'disable']);
     Route::post('/mfa/recovery-codes/regenerate', [MfaController::class, 'regenerateRecoveryCodes']);
 
+    // Cambio de contraseña
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
+    
     // Rutas solo para administradores
     Route::middleware('role:admin')->group(function () {
         Route::get('/users', [UserController::class, 'index']);
