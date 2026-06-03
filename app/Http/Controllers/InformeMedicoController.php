@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\InformeMedico;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\SecurityLogService;
 
 class InformeMedicoController extends Controller
 {   
@@ -102,6 +103,7 @@ class InformeMedicoController extends Controller
     // Crear un informe
     public function store(Request $request)
     {
+        $user = Auth::user();
         $request->validate([
             'titulo'      => 'required|string|max:255',
             'diagnostico' => 'required|string',
@@ -126,6 +128,7 @@ class InformeMedicoController extends Controller
             'ruta_archivo' => $rutaArchivo,
         ]);
 
+        SecurityLogService::log('DOCUMENT_CREATED', $user->id, 'Informe creado con id ' . $informe->id, $request);
         return response()->json([
             'message' => 'Informe creado con éxito',
             'data'    => $informe
@@ -151,7 +154,7 @@ class InformeMedicoController extends Controller
      */
 
     // Ver un informe específico
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $user = Auth::user();
         $informe = InformeMedico::find($id);
@@ -164,6 +167,7 @@ class InformeMedicoController extends Controller
         if (!$user->hasRole('admin') &&
             $informe->paciente_id !== $user->id &&
             $informe->medico_id !== $user->id) {
+            SecurityLogService::log('ACCESS_DENIED', $user->id, 'Intento de acceso no autorizado a informe ' . $id, $request);
             return response()->json(['message' => 'Acceso no autorizado'], 403);
         }
 
@@ -215,6 +219,7 @@ class InformeMedicoController extends Controller
 
         // Solo admin o el médico que lo creó pueden editar
         if (!$user->hasRole('admin') && $informe->medico_id !== $user->id) {
+            SecurityLogService::log('ACCESS_DENIED', $user->id, 'Intento de acceso no autorizado al editar informe ' . $id, $request);
             return response()->json(['message' => 'Acceso no autorizado'], 403);
         }
 
@@ -257,7 +262,7 @@ class InformeMedicoController extends Controller
      */
 
     // Eliminar un informe
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $user = Auth::user();
         $informe = InformeMedico::find($id);
@@ -268,11 +273,13 @@ class InformeMedicoController extends Controller
 
         // Solo admin puede eliminar
         if (!$user->hasRole('admin')) {
+            SecurityLogService::log('ACCESS_DENIED', $user->id, 'Intento de eliminar informe sin permisos ' . $id, $request);
             return response()->json(['message' => 'Acceso no autorizado'], 403);
         }
 
         $informe->delete();
 
+        SecurityLogService::log('DOCUMENT_DELETED', $user->id, 'Informe eliminado con id ' . $id, $request);
         return response()->json(['message' => 'Informe eliminado correctamente']);
     }
 }
