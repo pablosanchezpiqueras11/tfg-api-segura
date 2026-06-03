@@ -290,4 +290,93 @@ class MfaController extends Controller
 
         return $codes;
     }
+
+    // Funciones para MFA obligatorio en administradores
+    public function setupRequired(Request $request)
+{
+    $request->validate([
+        'temporary_token' => 'required|string',
+    ]);
+
+    $user = User::where('mfa_temp_token', $request->temporary_token)->first();
+
+    if (!$user) {
+        return response()->json(['message' => 'Token inválido'], 401);
+    }
+
+    if ($user->mfa_enabled) {
+        return response()->json(['message' => 'MFA ya está activado'], 400);
+    }
+
+    $google2fa = new Google2FA();
+    $secret = $google2fa->generateSecretKey();
+
+    $user->mfa_secret = encrypt($secret);
+    $user->save();
+
+    $qrUrl = $google2fa->getQRCodeUrl(
+        config('app.name'),
+        $user->email,
+        $secret
+    );
+
+    $renderer = new ImageRenderer(
+        new RendererStyle(200),
+        new SvgImageBackEnd()
+    );
+    $writer = new Writer($renderer);
+    $qrSvg = $writer->writeString($qrUrl);
+
+    return response()->json([
+        'message' => 'Escanea el QR para activar el MFA obligatorio',
+        'secret' => $secret,
+        'qr_code' => base64_encode($qrSvg),
+        'temporary_token' => $request->temporary_token,
+    ]);
+}
+    // Función para confirmar MFA obligatorio en administradores
+    public function confirmRequired(Request $request)
+{
+    $request->validate([
+        'temporary_token' => 'required|string',
+        'code' => 'required|string|size:6',
+    ]);
+
+    $user = User::where('mfa_temp_token', $request->temporary_token)->first();
+
+    if (!$user) {
+        return response()->json(['message' => 'Token inválido'], 401);
+    }
+
+    $google2fa = new Google2FA();
+    $valid = $google2fa->verifyKey(decrypt($user->mfa_secret), $request->code);
+
+    if (!$valid) {
+        return response()->json(['message' => 'Código inválido'], 422);
+    }
+
+    $user->mfa_enabled = true;
+    $user->mfa_temp_token = null;
+    $user->save();
+
+    $codes = $this->generateRecoveryCodes($user);
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+    $refreshToken = \Illuminate\Support\Str::random(64);
+    \App\Models\RefreshToken::create([
+        'user_id' => $user->id,
+        'token_hash' => hash('sha256', $refreshToken),
+        'expires_at' => now()->addDays(30),
+    ]);
+
+    SecurityLogService::log('MFA_ENABLED', $user->id, 'MFA activado obligatoriamente para administrador', $request);
+
+    return response()->json([
+        'message' => 'MFA activado. Acceso concedido.',
+        'access_token' => $token,
+        'refresh_token' => $refreshToken,
+        'token_type' => 'Bearer',
+        'recovery_codes' => $codes,
+    ]);
+}
 }

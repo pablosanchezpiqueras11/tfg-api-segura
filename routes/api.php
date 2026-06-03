@@ -34,6 +34,10 @@ Route::middleware('throttle:5,1')->group(function () {
     Route::post('/token/revoke', [AuthController::class, 'revoke']);
 });
 
+ // Verificar si el usuario necesita configurar MFA
+    Route::post('/mfa/setup-required', [MfaController::class, 'setupRequired']);
+    Route::post('/mfa/confirm-required', [MfaController::class, 'confirmRequired']);
+
 // Rutas protegidas (requieren estar logueado)
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -57,7 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Cambio de contraseña
     Route::post('/change-password', [AuthController::class, 'changePassword']);
-    
+
     // Rutas solo para administradores
     Route::middleware('role:admin')->group(function () {
         Route::get('/users', [UserController::class, 'index']);

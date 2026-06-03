@@ -120,6 +120,17 @@ class AuthController extends Controller
         ]);
 
         // 4. VERIFICAR MFA
+        if ($user->hasRole('admin') && !$user->mfa_enabled) {
+            $tempToken = \Illuminate\Support\Str::random(64);
+            $user->update(['mfa_temp_token' => $tempToken]);
+
+            return response()->json([
+                'message' => 'Los administradores deben activar el MFA antes de acceder.',
+                'mfa_setup_required' => true,
+                'temporary_token' => $tempToken,
+            ]);
+        }
+
         if ($user->mfa_enabled) {
             $tempToken = \Illuminate\Support\Str::random(64);
             $user->update(['mfa_temp_token' => $tempToken]);

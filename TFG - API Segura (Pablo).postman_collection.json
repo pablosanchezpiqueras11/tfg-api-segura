@@ -1153,6 +1153,55 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Activar MFA (Obligatorio Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"temporary_token\": \"Gry3mDTrvOxOCCcOpx0gOMFRBzvnbGDgL5mvu9NVS1bWDLT55XPQUpVPXAgcJQfC\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost/api/mfa/setup-required",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "mfa",
+                "setup-required"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirmar MFA (Obligatorio Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/mfa/confirm-required",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "mfa",
+                "confirm-required"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
