@@ -43,7 +43,7 @@ class MfaController extends Controller
         $secret = $google2fa->generateSecretKey();
 
         // Guardamos el secreto temporalmente (sin activar aún)
-        $user->mfa_secret = $secret;
+        $user->mfa_secret = encrypt($secret);
         $user->save();
 
         // Generamos la URL para el QR
@@ -94,9 +94,11 @@ class MfaController extends Controller
         ]);
 
         $user = Auth::user();
+        $user->refresh(); // Refresca el usuario desde la BD
         $google2fa = new Google2FA();
 
-        $valid = $google2fa->verifyKey($user->mfa_secret, $request->code);
+        
+        $valid = $google2fa->verifyKey(decrypt($user->mfa_secret), $request->code);
 
         if (!$valid) {
             SecurityLogService::log('MFA_FAILED', $user->id, 'Código MFA inválido al activar', $request);
@@ -145,7 +147,7 @@ class MfaController extends Controller
         $user = Auth::user();
         $google2fa = new Google2FA();
 
-        $valid = $google2fa->verifyKey($user->mfa_secret, $request->code);
+        $valid = $google2fa->verifyKey(decrypt($user->mfa_secret), $request->code);
 
         if (!$valid) {
             SecurityLogService::log('MFA_FAILED', $user->id, 'Código MFA inválido al desactivar', $request);
@@ -198,7 +200,7 @@ class MfaController extends Controller
         $google2fa = new Google2FA();
 
         // Intentamos con código TOTP normal
-        $valid = $google2fa->verifyKey($user->mfa_secret, $request->code);
+        $valid = $google2fa->verifyKey(decrypt($user->mfa_secret), $request->code);
 
         // Si no es válido, intentamos con código de recuperación
         if (!$valid) {
