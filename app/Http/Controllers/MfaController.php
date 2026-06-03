@@ -226,11 +226,20 @@ class MfaController extends Controller
         $user->save();
 
         $token = $user->createToken('auth_token')->plainTextToken;
+        // Generamos el refresh token
+        $refreshToken = \Illuminate\Support\Str::random(64);
+        \App\Models\RefreshToken::create([
+            'user_id' => $user->id,
+            'token_hash' => hash('sha256', $refreshToken),
+            'expires_at' => now()->addDays(30),
+        ]);
+
         SecurityLogService::log('LOGIN_SUCCESS', $user->id, 'Login completado con MFA', $request);
 
         return response()->json([
             'message' => 'Login completado',
             'access_token' => $token,
+            'refresh_token' => $refreshToken,
             'token_type' => 'Bearer',
         ]);
     }

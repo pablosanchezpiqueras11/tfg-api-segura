@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon; // Necesaria para gestionar los tiempos de bloqueo
 use App\Services\SecurityLogService; // Servicio para registrar eventos de seguridad
+use App\Models\RefreshToken;
 
 class AuthController extends Controller
 {
@@ -131,13 +132,22 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
-        SecurityLogService::log('LOGIN_SUCCESS', $user->id, 'Login correcto', $request);
+        // Generamos el refresh token
+    $refreshToken = \Illuminate\Support\Str::random(64);
+    RefreshToken::create([
+        'user_id' => $user->id,
+        'token_hash' => hash('sha256', $refreshToken),
+        'expires_at' => now()->addDays(30),
+    ]);
 
-        return response()->json([
-            'message' => 'Login correcto',
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-        ]);
+    SecurityLogService::log('LOGIN_SUCCESS', $user->id, 'Login correcto', $request);
+
+    return response()->json([
+        'message' => 'Login correcto',
+        'access_token' => $token,
+        'refresh_token' => $refreshToken,
+        'token_type' => 'Bearer',
+    ]);
     }
 
      /**
@@ -165,5 +175,95 @@ class AuthController extends Controller
     return response()->json([
         'message' => 'No se pudo encontrar una sesión activa.'
     ], 401);
+}
+    /**
+     * @OA\Post(
+     *     path="/token/refresh",
+     *     summary="Renovar token de acceso",
+     *     tags={"Autenticación"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"refresh_token"},
+     *             @OA\Property(property="refresh_token", type="string", example="abc123...")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Token renovado correctamente"),
+     *     @OA\Response(response=401, description="Refresh token inválido o caducado")
+     * )
+     */
+    public function refresh(Request $request)
+{
+        $request->validate([
+            'refresh_token' => 'required|string',
+        ]);
+
+        $tokenHash = hash('sha256', $request->refresh_token);
+        $refreshToken = RefreshToken::where('token_hash', $tokenHash)->first();
+
+        if (!$refreshToken || !$refreshToken->isValid()) {
+            return response()->json(['message' => 'Refresh token inválido o caducado'], 401);
+        }
+
+        $user = $refreshToken->user;
+
+        // Revocamos el refresh token anterior
+        $refreshToken->update(['revoked_at' => now()]);
+
+        // Revocamos tokens de acceso anteriores
+        $user->tokens()->delete();
+
+        // Generamos nuevos tokens
+        $newAccessToken = $user->createToken('auth_token')->plainTextToken;
+        $newRefreshToken = \Illuminate\Support\Str::random(64);
+
+        RefreshToken::create([
+            'user_id' => $user->id,
+            'token_hash' => hash('sha256', $newRefreshToken),
+            'expires_at' => now()->addDays(30),
+        ]);
+
+        SecurityLogService::log('TOKEN_REFRESHED', $user->id, 'Token de acceso renovado', $request);
+
+        return response()->json([
+            'message' => 'Token renovado correctamente',
+            'access_token' => $newAccessToken,
+            'refresh_token' => $newRefreshToken,
+            'token_type' => 'Bearer',
+        ]);
+}
+
+    /**
+     * @OA\Post(
+     *     path="/token/revoke",
+     *     summary="Revocar refresh token",
+     *     tags={"Autenticación"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"refresh_token"},
+     *             @OA\Property(property="refresh_token", type="string", example="abc123...")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Token revocado correctamente"),
+     *     @OA\Response(response=401, description="Refresh token inválido")
+     * )
+     */
+    public function revoke(Request $request)
+{
+        $request->validate([
+            'refresh_token' => 'required|string',
+        ]);
+
+        $tokenHash = hash('sha256', $request->refresh_token);
+        $refreshToken = RefreshToken::where('token_hash', $tokenHash)->first();
+
+        if (!$refreshToken || !$refreshToken->isValid()) {
+            return response()->json(['message' => 'Refresh token inválido o caducado'], 401);
+        }
+
+        $refreshToken->update(['revoked_at' => now()]);
+
+        return response()->json(['message' => 'Refresh token revocado correctamente']);
 }
 }

@@ -30,6 +30,8 @@ Route::middleware('throttle:5,1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/mfa/verify-login', [MfaController::class, 'verifyLogin']);
+    Route::post('/token/refresh', [AuthController::class, 'refresh']);
+    Route::post('/token/revoke', [AuthController::class, 'revoke']);
 });
 
 // Rutas protegidas (requieren estar logueado)
@@ -63,4 +65,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/users/{id}/unlock', [UserController::class, 'unlock']);
         Route::get('/security-logs', [UserController::class, 'securityLogs']);
     });
+
+    
 });

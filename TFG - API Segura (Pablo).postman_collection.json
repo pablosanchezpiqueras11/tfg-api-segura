@@ -910,6 +910,55 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Renovar Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost/api/token/refresh",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "token",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Revocar Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"refresh_token\": \"7eVJpQshxeF8XKsQBa3twjCHW0nmik6d6BMAIFI0TeJF9BMCrPDEdTMjcJipJe33\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost/api/token/revoke",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "path": [
+                "api",
+                "token",
+                "revoke"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
