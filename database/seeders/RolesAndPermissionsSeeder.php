@@ -7,6 +7,10 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
 class RolesAndPermissionsSeeder extends Seeder
+    //Inicialmente se planteó la autorización con permisos granulares de Spatie, 
+    // pero al tener solo tres roles con límites de acceso bien definidos, 
+    // el control basado en roles resulta más simple y suficiente; 
+    // por eso la autorización se implementa verificando el rol del usuario
 {
     public function run(): void
     {
