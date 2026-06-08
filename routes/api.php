@@ -69,6 +69,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Rutas para usar códigos de recuperación MFA
     Route::post('/mfa/recovery-codes/use', [MfaController::class, 'useRecoveryCode']);
 
+    Route::get('/buscar-informes', [InformeMedicoController::class, 'buscar']);
+
     // Rutas solo para administradores
     Route::middleware('role:admin')->group(function () {
         Route::get('/users', [UserController::class, 'index']);

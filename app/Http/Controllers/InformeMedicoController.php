@@ -282,4 +282,12 @@ class InformeMedicoController extends Controller
         SecurityLogService::log('DOCUMENT_DELETED', $user->id, 'Informe eliminado con id ' . $id, $request);
         return response()->json(['message' => 'Informe eliminado correctamente']);
     }
+
+    // Búsqueda de informes (consulta parametrizada)
+    public function buscar(Request $request)
+    {
+        $titulo = $request->query('titulo');
+        $informes = InformeMedico::where('titulo', $titulo)->get();
+        return response()->json($informes);
+}
 }
