@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InformeMedico;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InformeMedicoController extends Controller
 {
@@ -74,5 +75,14 @@ class InformeMedicoController extends Controller
         $informe->delete();
 
         return response()->json(['mensaje' => 'Informe eliminado']);
+    }
+
+    // Búsqueda de informes (consulta cruda concatenada)
+    // Patrón inseguro a propósito para la comparativa. Nunca usar en producción.
+    public function buscar(Request $request)
+    {
+        $titulo = $request->query('titulo');
+        $informes = DB::select("SELECT * FROM informes_medicos WHERE titulo = '$titulo'");
+        return response()->json($informes);
     }
 }

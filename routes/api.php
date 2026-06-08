@@ -21,6 +21,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 
+Route::get('/buscar-informes', [InformeMedicoController::class, 'buscar']);
+
 // Rutas de informes médicos
 Route::get('/informes', [InformeMedicoController::class, 'index']);
 Route::post('/informes', [InformeMedicoController::class, 'store']);
