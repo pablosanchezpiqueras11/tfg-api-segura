@@ -77,7 +77,7 @@ class InformeMedicoController extends Controller
         return response()->json(['mensaje' => 'Informe eliminado']);
     }
 
-    // Búsqueda de informes (consulta cruda concatenada)
+    // Búsqueda de informes
     // Patrón inseguro a propósito para la comparativa. Nunca usar en producción.
     public function buscar(Request $request)
     {

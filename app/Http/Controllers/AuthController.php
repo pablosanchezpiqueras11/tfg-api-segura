@@ -23,7 +23,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password), // ¡Importante! Siempre encriptada
+            'password' => Hash::make($request->password), // Siempre encriptada
         ]);
         
         // Emitimos el token de Sanctum
