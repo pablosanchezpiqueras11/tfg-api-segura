@@ -31,7 +31,7 @@ class AuthController extends Controller
      * )
      */
 
-    // Registro de usuario(primero algo funcional, mas adelante se añadirá validación y roles)
+    // Registro de usuario
     public function register(Request $request)
     {
         // Validamos los datos básicos
@@ -45,7 +45,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password), // ¡Importante! Siempre encriptada
+            'password' => Hash::make($request->password), // Siempre encriptada
         ]);
         $user->assignRole('user'); // Asignamos rol por defecto
         // Emitimos el token de Sanctum
