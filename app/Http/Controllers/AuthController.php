@@ -92,7 +92,7 @@ class AuthController extends Controller
         }
 
         // 1. VERIFICAR BLOQUEO
-        if ($user->bloqueado_hasta && Carbon::parse($user->bloqueado_hasta)->isFuture()) {
+        if ($user->bloqueado_hasta && Carbon::parse($user->bloqueado_hasta)->isFuture()) { //isFuture() verifica si el bloqueo aún está activo
             $minutosRestantes = Carbon::now()->diffInMinutes($user->bloqueado_hasta);
             return response()->json([
                 'message' => "Cuenta bloqueada. Inténtalo en $minutosRestantes minutos."
@@ -100,7 +100,7 @@ class AuthController extends Controller
         }
 
         // 2. VERIFICAR CONTRASEÑA
-        if (!Hash::check($request->password, $user->password)) {
+        if (!Hash::check($request->password, $user->password)) { //Hash::check compara la contraseña recibida con el hash bcrypt guardado
             $user->increment('intentos_fallidos');
 
             if ($user->intentos_fallidos >= 3) {
@@ -113,7 +113,7 @@ class AuthController extends Controller
         }
 
         // 3. LOGIN EXITOSO
-        $user->tokens()->delete();
+        $user->tokens()->delete(); //borramos tokens anteriores para evitar múltiples sesiones
         $user->update([
             'intentos_fallidos' => 0,
             'bloqueado_hasta' => null,
@@ -142,7 +142,7 @@ class AuthController extends Controller
             ]);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken; //El plainTextToken es el token en claro, que solo se entrega al cliente en el momento de crearlo
         // Generamos el refresh token
     $refreshToken = \Illuminate\Support\Str::random(64);
     RefreshToken::create([

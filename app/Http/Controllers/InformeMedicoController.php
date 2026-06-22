@@ -156,7 +156,7 @@ class InformeMedicoController extends Controller
     // Ver un informe específico
     public function show(Request $request, $id)
     {
-        $user = Auth::user();
+        $user = Auth::user(); //usuario ya autenticado 
         $informe = InformeMedico::find($id);
 
         if (!$informe) {

@@ -190,7 +190,7 @@ class MfaController extends Controller
             'code' => 'required|string',
         ]);
 
-        // Buscamos el usuario por el temporary_token
+        // Buscamos el usuario por el temporary_token //(el que el login generó cuando detectó que el usuario tenía MFA)
         $user = User::where('mfa_temp_token', $request->temporary_token)->first();
 
         if (!$user) {
@@ -200,12 +200,12 @@ class MfaController extends Controller
         $google2fa = new Google2FA();
 
         // Intentamos con código TOTP normal
-        $valid = $google2fa->verifyKey(decrypt($user->mfa_secret), $request->code);
+        $valid = $google2fa->verifyKey(decrypt($user->mfa_secret), $request->code); //verifyKey hace el cálculo TOTP (con la ventana de tolerancia incluida) y devuelve si coincide
 
         // Si no es válido, intentamos con código de recuperación
         if (!$valid) {
             $recovery = MfaRecoveryCode::where('user_id', $user->id)
-                ->whereNull('used_at')
+                ->whereNull('used_at') // filtra solo códigos no usados
                 ->get()
                 ->first(fn($r) => Hash::check($request->code, $r->code_hash));
 
